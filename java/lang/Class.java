@@ -261,7 +261,7 @@ public final class Class<T> implements java.io.Serializable,
     public static Class<?> forName(String className)
                 throws ClassNotFoundException {
         Class<?> caller = Reflection.getCallerClass();
-        return forName0(className, true, ClassLoader.getClassLoader(caller), caller);
+        return forName0(className, true, ClassLoader.getClassLoader(caller), caller);// 使用调用者的类加载器
     }
 
 
@@ -328,7 +328,7 @@ public final class Class<T> implements java.io.Serializable,
      */
     @CallerSensitive
     public static Class<?> forName(String name, boolean initialize,
-                                   ClassLoader loader)
+                                   ClassLoader loader) // loader 指定的类加载器，initialize是否需要初始化
         throws ClassNotFoundException
     {
         Class<?> caller = null;
@@ -336,9 +336,9 @@ public final class Class<T> implements java.io.Serializable,
         if (sm != null) {
             // Reflective call to get caller class is only needed if a security manager
             // is present.  Avoid the overhead of making this call otherwise.
-            caller = Reflection.getCallerClass();
+            caller = Reflection.getCallerClass();//  native 方法，获取调用forName那个类的类对象
             if (sun.misc.VM.isSystemDomainLoader(loader)) {
-                ClassLoader ccl = ClassLoader.getClassLoader(caller);
+                ClassLoader ccl = ClassLoader.getClassLoader(caller);// 获取调用forName那个类的类对象的类加载器
                 if (!sun.misc.VM.isSystemDomainLoader(ccl)) {
                     sm.checkPermission(
                         SecurityConstants.GET_CLASSLOADER_PERMISSION);

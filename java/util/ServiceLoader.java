@@ -319,7 +319,7 @@ public final class ServiceLoader<S>
     }
 
     // Private inner class implementing fully-lazy provider lookup
-    //
+    // 私有内部类，提供服务提供者的查找
     private class LazyIterator
         implements Iterator<S>
     {
@@ -367,6 +367,8 @@ public final class ServiceLoader<S>
             nextName = null;
             Class<?> c = null;
             try {
+                //全包类名（cn:就是我们spi配置文件中的路径），是否初始化，类加载器（如果为空那就是使用调用者的类加载器，
+                // 也就是启动类加载器，是无法加载到的），所以我们传入了系统类加载器（线程上下文类加载器）
                 c = Class.forName(cn, false, loader);
             } catch (ClassNotFoundException x) {
                 fail(service,
@@ -464,7 +466,7 @@ public final class ServiceLoader<S>
      */
     public Iterator<S> iterator() {
         return new Iterator<S>() {
-
+            // 返回缓存的服务提供者
             Iterator<Map.Entry<String,S>> knownProviders
                 = providers.entrySet().iterator();
 
@@ -533,8 +535,9 @@ public final class ServiceLoader<S>
      *
      * @return A new service loader
      */
+    // 当运行这个方法这个类的加载器是启动类加载器，如果按照双亲委托，其中的使用的类也是启动类加载器加载的
     public static <S> ServiceLoader<S> load(Class<S> service) {
-        ClassLoader cl = Thread.currentThread().getContextClassLoader();
+        ClassLoader cl = Thread.currentThread().getContextClassLoader();// 获取当前上下文类加载器,系统类加载器
         return ServiceLoader.load(service, cl);
     }
 
