@@ -98,7 +98,7 @@ public class DriverManager {
      * jdbc.properties and then use the {@code ServiceLoader} mechanism
      */
     static {
-        loadInitialDrivers();
+        loadInitialDrivers();// 使用ServiceLoader加载机制进行加载；
         println("JDBC DriverManager initialized");
     }
 
@@ -244,7 +244,7 @@ public class DriverManager {
             info.put("password", password);
         }
 
-        return (getConnection(url, info, Reflection.getCallerClass()));
+        return (getConnection(url, info, Reflection.getCallerClass()));// 最后一个参数返回调用者的Class对象（jvm.classloaderProcessed.LoaderTest14）
     }
 
     /**
@@ -349,7 +349,7 @@ public class DriverManager {
      * @exception NullPointerException if {@code driver} is null
      * @since 1.8
      */
-    public static synchronized void registerDriver(java.sql.Driver driver,
+    public static synchronized void registerDriver(java.sql.Driver driver, // 注册给定的驱动给DriverManager
             DriverAction da)
         throws SQLException {
 
@@ -553,12 +553,12 @@ public class DriverManager {
         if(driver != null) {
             Class<?> aClass = null;
             try {
-                aClass =  Class.forName(driver.getClass().getName(), true, classLoader);
+                aClass =  Class.forName(driver.getClass().getName(), true, classLoader);// 用系统类加载器加载并初始化
             } catch (Exception ex) {
                 result = false;
             }
-
-             result = ( aClass == driver.getClass() ) ? true : false;
+            //因为之前的加载时通过spi方式加载的，程序员本身可以修改线程上下文类加载器；
+             result = ( aClass == driver.getClass() ) ? true : false;// 这行代码什么情况下会不相等？意义何在？为了避免命名空间不同
         }
 
         return result;
@@ -583,7 +583,7 @@ public class DriverManager {
         AccessController.doPrivileged(new PrivilegedAction<Void>() {
             public Void run() {
 
-                ServiceLoader<Driver> loadedDrivers = ServiceLoader.load(Driver.class);
+                ServiceLoader<Driver> loadedDrivers = ServiceLoader.load(Driver.class);// 根据spi机制寻找具体实现
                 Iterator<Driver> driversIterator = loadedDrivers.iterator();
 
                 /* Load these drivers, so that they can be instantiated.
@@ -637,7 +637,7 @@ public class DriverManager {
          * classloader, so that the JDBC driver class outside rt.jar
          * can be loaded from here.
          */
-        ClassLoader callerCL = caller != null ? caller.getClassLoader() : null;
+        ClassLoader callerCL = caller != null ? caller.getClassLoader() : null; // 显然是之前传入的系统类加载器，结合java_study的LoaderTest14
         synchronized(DriverManager.class) {
             // synchronize loading of the correct classloader.
             if (callerCL == null) {
@@ -658,7 +658,7 @@ public class DriverManager {
         for(DriverInfo aDriver : registeredDrivers) {
             // If the caller does not have permission to load the driver then
             // skip it.
-            if(isDriverAllowed(aDriver.driver, callerCL)) {
+            if(isDriverAllowed(aDriver.driver, callerCL)) { // 判断是否相等，根据namespce
                 try {
                     println("    trying " + aDriver.driver.getClass().getName());
                     Connection con = aDriver.driver.connect(url, info);
