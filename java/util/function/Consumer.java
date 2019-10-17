@@ -27,7 +27,7 @@ package java.util.function;
 import java.util.Objects;
 
 /**
- * Represents an operation that accepts a single input argument and returns no
+ * Represents an operation that accepts a single input argument and returns no //接受单个参数，不返回结果
  * result. Unlike most other functional interfaces, {@code Consumer} is expected
  * to operate via side-effects.
  *
@@ -38,9 +38,9 @@ import java.util.Objects;
  *
  * @since 1.8
  */
-@FunctionalInterface
+@FunctionalInterface // 函数式接口
 public interface Consumer<T> {
-
+// 消费者，只消费，不返回；
     /**
      * Performs this operation on the given argument.
      *

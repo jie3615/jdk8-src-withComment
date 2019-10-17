@@ -42,7 +42,7 @@ import java.lang.annotation.*;
  * implementation from {@code java.lang.Object} or elsewhere.
  *
  * <p>Note that instances of functional interfaces can be created with
- * lambda expressions, method references, or constructor references.
+ * lambda expressions, method references, or constructor references. 函数式接口的实例创建三种方式；lmabda表达式、方法引用、构造方法引用；
  *
  * <p>If a type is annotated with this annotation type, compilers are
  * required to generate an error message unless:

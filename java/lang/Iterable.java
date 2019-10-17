@@ -51,7 +51,7 @@ public interface Iterable<T> {
     Iterator<T> iterator();
 
     /**
-     * Performs the given action for each element of the {@code Iterable}
+     * Performs the given action for each element of the {@code Iterable}// 传入的参数是动作
      * until all elements have been processed or the action throws an
      * exception.  Unless otherwise specified by the implementing class,
      * actions are performed in the order of iteration (if an iteration order
@@ -69,8 +69,8 @@ public interface Iterable<T> {
      * @throws NullPointerException if the specified action is null
      * @since 1.8
      */
-    default void forEach(Consumer<? super T> action) {
-        Objects.requireNonNull(action);
+    default void forEach(Consumer<? super T> action) {  // 这个方法作为接口的默认方法，实现了forEach
+        Objects.requireNonNull(action);                 // 实现了这个接口的实现类都默认存在了这个方法；
         for (T t : this) {
             action.accept(t);
         }
