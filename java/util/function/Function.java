@@ -63,7 +63,7 @@ public interface Function<T, R> {
      *
      * @see #andThen(Function)
      */
-    default <V> Function<V, R> compose(Function<? super V, ? extends T> before) {
+    default <V> Function<V, R> compose(Function<? super V, ? extends T> before) { // 组合函数，先调用before对输入进行处理，输出结果作为参数调用当前Funtion的apply方法
         Objects.requireNonNull(before);
         return (V v) -> apply(before.apply(v));
     }
@@ -83,7 +83,7 @@ public interface Function<T, R> {
      *
      * @see #compose(Function)
      */
-    default <V> Function<T, V> andThen(Function<? super R, ? extends V> after) {
+    default <V> Function<T, V> andThen(Function<? super R, ? extends V> after) { // 先应用当前的funtion处理，再调用after的apply处理
         Objects.requireNonNull(after);
         return (T t) -> after.apply(apply(t));
     }
@@ -94,7 +94,7 @@ public interface Function<T, R> {
      * @param <T> the type of the input and output objects to the function
      * @return a function that always returns its input argument
      */
-    static <T> Function<T, T> identity() {
+    static <T> Function<T, T> identity() { // 输入什么返回什么
         return t -> t;
     }
 }

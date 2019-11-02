@@ -83,16 +83,16 @@ import java.util.function.Supplier;
  * and {@code t2}, the results {@code r1} and {@code r2} in the computation
  * below must be equivalent:
  * <pre>{@code
- *     A a1 = supplier.get();
+ *     A a1 = supplier.get(); // 单线程模式
  *     accumulator.accept(a1, t1);
  *     accumulator.accept(a1, t2);
  *     R r1 = finisher.apply(a1);  // result without splitting
  *
- *     A a2 = supplier.get();
+ *     A a2 = supplier.get(); // 多线程模式
  *     accumulator.accept(a2, t1);
  *     A a3 = supplier.get();
  *     accumulator.accept(a3, t2);
- *     R r2 = finisher.apply(combiner.apply(a2, a3));  // result with splitting
+ *     R r2 = finisher.apply(combiner.apply(a2, a3));  // result with splitting  // 结合性，保证单线程和多线程的一致性
  * } </pre>
  *
  * <p>For collectors that do not have the {@code UNORDERED} characteristic,
@@ -188,26 +188,26 @@ import java.util.function.Supplier;
  * @see Stream#collect(Collector)
  * @see Collectors
  *
- * @param <T> the type of input elements to the reduction operation
- * @param <A> the mutable accumulation type of the reduction operation (often
+ * @param <T> the type of input elements to the reduction operation // 流中每一个元素类型
+ * @param <A> the mutable accumulation type of the reduction operation (often // 可变累积容器类型
  *            hidden as an implementation detail)
- * @param <R> the result type of the reduction operation
+ * @param <R> the result type of the reduction operation 汇聚的结果类型
  * @since 1.8
  */
 public interface Collector<T, A, R> {
     /**
-     * A function that creates and returns a new mutable result container.
+     * A function that creates and returns a new mutable result container. //创建一个新的结果容器
      *
-     * @return a function which returns a new, mutable result container
+     * @return a function which returns a new, mutable result container/
      */
-    Supplier<A> supplier();
+    Supplier<A> supplier();// 返回的结果容器类型
 
     /**
-     * A function that folds a value into a mutable result container.
+     * A function that folds a value into a mutable result container.// 将一个值折叠（处理）放到一个结果容器中
      *
      * @return a function which folds a value into a mutable result container
      */
-    BiConsumer<A, T> accumulator();
+    BiConsumer<A, T> accumulator(); // 接受两个参数，不返回值
 
     /**
      * A function that accepts two partial results and merges them.  The
@@ -217,7 +217,7 @@ public interface Collector<T, A, R> {
      * @return a function which combines two partial results into a combined
      * result
      */
-    BinaryOperator<A> combiner();
+    BinaryOperator<A> combiner();// 将两个结果容器合并成一个
 
     /**
      * Perform the final transformation from the intermediate accumulation type
@@ -230,7 +230,7 @@ public interface Collector<T, A, R> {
      * @return a function which transforms the intermediate result to the final
      * result
      */
-    Function<A, R> finisher();
+    Function<A, R> finisher();// 对容器执行最终的转换
 
     /**
      * Returns a {@code Set} of {@code Collector.Characteristics} indicating
@@ -322,20 +322,20 @@ public interface Collector<T, A, R> {
          * then it should only be evaluated concurrently if applied to an
          * unordered data source.
          */
-        CONCURRENT,
+        CONCURRENT,// 收集器是并发的，收集结果并发执行
 
         /**
          * Indicates that the collection operation does not commit to preserving
          * the encounter order of input elements.  (This might be true if the
          * result container has no intrinsic order, such as a {@link Set}.)
          */
-        UNORDERED,
+        UNORDERED, //
 
         /**
          * Indicates that the finisher function is the identity function and
          * can be elided.  If set, it must be the case that an unchecked cast
          * from A to R will succeed.
          */
-        IDENTITY_FINISH
+        IDENTITY_FINISH //finsher,中间结果类型和result一致，直接返回
     }
 }

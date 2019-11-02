@@ -54,7 +54,7 @@ public interface BinaryOperator<T> extends BiFunction<T,T,T> {
      *         according to the supplied {@code Comparator}
      * @throws NullPointerException if the argument is null
      */
-    public static <T> BinaryOperator<T> minBy(Comparator<? super T> comparator) {
+    public static <T> BinaryOperator<T> minBy(Comparator<? super T> comparator) { // 接收一个比较器
         Objects.requireNonNull(comparator);
         return (a, b) -> comparator.compare(a, b) <= 0 ? a : b;
     }

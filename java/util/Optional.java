@@ -40,14 +40,14 @@ import java.util.function.Supplier;
  * {@link #ifPresent(java.util.function.Consumer) ifPresent()} (execute a block
  * of code if the value is present).
  *
- * <p>This is a <a href="../lang/doc-files/ValueBased.html">value-based</a>
+ * <p>This is a <a href="../lang/doc-files/ValueBased.html">value-based</a>  // 这个类是基于值的类
  * class; use of identity-sensitive operations (including reference equality
  * ({@code ==}), identity hash code, or synchronization) on instances of
  * {@code Optional} may have unpredictable results and should be avoided.
  *
  * @since 1.8
  */
-public final class Optional<T> {
+public final class Optional<T> { // 容器对象，包含的对象存在或者不存在都可以，这个类是不能被继承的；
     /**
      * Common instance for {@code empty()}.
      */

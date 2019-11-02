@@ -226,7 +226,7 @@ public final class Collectors {
      * {@code List}, in encounter order
      */
     public static <T>
-    Collector<T, ?, List<T>> toList() {
+    Collector<T, ?, List<T>> toList() { // toCollection的特化版本，toCollection可以传入集合的类型
         return new CollectorImpl<>((Supplier<List<T>>) ArrayList::new, List::add,
                                    (left, right) -> { left.addAll(right); return left; },
                                    CH_ID);
@@ -247,7 +247,7 @@ public final class Collectors {
      * {@code Set}
      */
     public static <T>
-    Collector<T, ?, Set<T>> toSet() {
+    Collector<T, ?, Set<T>> toSet() {// toCollection的特化版本，toCollection可以传入集合的类型
         return new CollectorImpl<>((Supplier<Set<T>>) HashSet::new, Set::add,
                                    (left, right) -> { left.addAll(right); return left; },
                                    CH_UNORDERED_ID);
@@ -375,14 +375,14 @@ public final class Collectors {
      * @return a collector which performs the action of the downstream collector,
      * followed by an additional finishing step
      */
-    public static<T,A,R,RR> Collector<T,A,RR> collectingAndThen(Collector<T,A,R> downstream,
+    public static<T,A,R,RR> Collector<T,A,RR> collectingAndThen(Collector<T,A,R> downstream,  // 下游收集器
                                                                 Function<R,RR> finisher) {
         Set<Collector.Characteristics> characteristics = downstream.characteristics();
         if (characteristics.contains(Collector.Characteristics.IDENTITY_FINISH)) {
             if (characteristics.size() == 1)
                 characteristics = Collectors.CH_NOID;
             else {
-                characteristics = EnumSet.copyOf(characteristics);
+                characteristics = EnumSet.copyOf(characteristics); // 去掉IDENTITY_FINISH，如果不去掉不会执行finisher
                 characteristics.remove(Collector.Characteristics.IDENTITY_FINISH);
                 characteristics = Collections.unmodifiableSet(characteristics);
             }
@@ -390,7 +390,7 @@ public final class Collectors {
         return new CollectorImpl<>(downstream.supplier(),
                                    downstream.accumulator(),
                                    downstream.combiner(),
-                                   downstream.finisher().andThen(finisher),
+                                   downstream.finisher().andThen(finisher), // function 组合函数
                                    characteristics);
     }
 
@@ -463,10 +463,10 @@ public final class Collectors {
     public static <T> Collector<T, ?, Integer>
     summingInt(ToIntFunction<? super T> mapper) {
         return new CollectorImpl<>(
-                () -> new int[1],
-                (a, t) -> { a[0] += mapper.applyAsInt(t); },
-                (a, b) -> { a[0] += b[0]; return a; },
-                a -> a[0], CH_NOID);
+                () -> new int[1], // 为什么不用一个整数？用一个数组？用一个数字的话是不可变的，值类型，数组是引用类型的，可变，中间结果是容器类型的 ；
+                (a, t) -> { a[0] += mapper.applyAsInt(t); },// 累加器
+                (a, b) -> { a[0] += b[0]; return a; },// 合并器
+                a -> a[0], CH_NOID);// finisher
     }
 
     /**
@@ -791,7 +791,7 @@ public final class Collectors {
      * collector is not required, using {@link #groupingByConcurrent(Function)}
      * may offer better parallel performance.
      *
-     * @param <T> the type of the input elements
+     * @param <T> the type of the input elements //输入类型
      * @param <K> the type of the keys
      * @param classifier the classifier function mapping input elements to keys
      * @return a {@code Collector} implementing the group-by operation
@@ -801,7 +801,7 @@ public final class Collectors {
      * @see #groupingByConcurrent(Function)
      */
     public static <T, K> Collector<T, ?, Map<K, List<T>>>
-    groupingBy(Function<? super T, ? extends K> classifier) {
+    groupingBy(Function<? super T, ? extends K> classifier) { // 参数是一个分类器函数
         return groupingBy(classifier, toList());
     }
 
@@ -898,19 +898,19 @@ public final class Collectors {
      * @see #groupingByConcurrent(Function, Supplier, Collector)
      */
     public static <T, K, D, A, M extends Map<K, D>>
-    Collector<T, ?, M> groupingBy(Function<? super T, ? extends K> classifier,
-                                  Supplier<M> mapFactory,
-                                  Collector<? super T, A, D> downstream) {
-        Supplier<A> downstreamSupplier = downstream.supplier();
-        BiConsumer<A, ? super T> downstreamAccumulator = downstream.accumulator();
-        BiConsumer<Map<K, A>, T> accumulator = (m, t) -> {
+    Collector<T, ?, M> groupingBy(Function<? super T, ? extends K> classifier,// 参数1 分类器 ，输入T返回K,map 的键
+                                  Supplier<M> mapFactory,// 返回类型
+                                  Collector<? super T, A, D> downstream) {// T:
+        Supplier<A> downstreamSupplier = downstream.supplier(); // 下游收集器中间累积类型
+        BiConsumer<A, ? super T> downstreamAccumulator = downstream.accumulator();// 返回下游累加器
+        BiConsumer<Map<K, A>, T> accumulator = (m, t) -> { // 最终的当前收集器的类型
             K key = Objects.requireNonNull(classifier.apply(t), "element cannot be mapped to a null key");
-            A container = m.computeIfAbsent(key, k -> downstreamSupplier.get());
+            A container = m.computeIfAbsent(key, k -> downstreamSupplier.get());// 中间结果类型
             downstreamAccumulator.accept(container, t);
         };
         BinaryOperator<Map<K, A>> merger = Collectors.<K, A, Map<K, A>>mapMerger(downstream.combiner());
         @SuppressWarnings("unchecked")
-        Supplier<Map<K, A>> mangledFactory = (Supplier<Map<K, A>>) mapFactory;
+        Supplier<Map<K, A>> mangledFactory = (Supplier<Map<K, A>>) mapFactory; // 强制类型转换
 
         if (downstream.characteristics().contains(Collector.Characteristics.IDENTITY_FINISH)) {
             return new CollectorImpl<>(mangledFactory, accumulator, merger, CH_ID);

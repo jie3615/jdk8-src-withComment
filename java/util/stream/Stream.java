@@ -70,29 +70,29 @@ import java.util.function.UnaryOperator;
  * <p>In addition to {@code Stream}, which is a stream of object references,
  * there are primitive specializations for {@link IntStream}, {@link LongStream},
  * and {@link DoubleStream}, all of which are referred to as "streams" and
- * conform to the characteristics and restrictions described here.
+ * conform to the characteristics and restrictions described here. // 特化的流减少了基本类型的装箱和拆箱
  *
  * <p>To perform a computation, stream
  * <a href="package-summary.html#StreamOps">operations</a> are composed into a
  * <em>stream pipeline</em>.  A stream pipeline consists of a source (which
  * might be an array, a collection, a generator function, an I/O channel,
- * etc), zero or more <em>intermediate operations</em> (which transform a
- * stream into another stream, such as {@link Stream#filter(Predicate)}), and a
- * <em>terminal operation</em> (which produces a result or side-effect, such
+ * etc), zero or more <em>intermediate operations</em> (which transform a // 可以包含多个中间操作
+ * stream into another stream, such as {@link Stream#filter(Predicate)}), and a // 一个终止操作
+ * <em>terminal operation</em> (which produces a result or side-effect, such  //
  * as {@link Stream#count()} or {@link Stream#forEach(Consumer)}).
  * Streams are lazy; computation on the source data is only performed when the
- * terminal operation is initiated, and source elements are consumed only
+ * terminal operation is initiated, and source elements are consumed only //　流失懒加载的，对源数据的计算只有在遇到终止操作的时候才执行；
  * as needed.
  *
- * <p>Collections and streams, while bearing some superficial similarities,
- * have different goals.  Collections are primarily concerned with the efficient
+ * <p>Collections and streams, while bearing some superficial similarities,　　// 集合和流相似，但是有不同的目标
+ * have different goals.  Collections are primarily concerned with the efficient // 集合是对于元素的管理和访问
  * management of, and access to, their elements.  By contrast, streams do not
- * provide a means to directly access or manipulate their elements, and are
+ * provide a means to directly access or manipulate their elements, and are // 流是声明性的对元素内容的计算
  * instead concerned with declaratively describing their source and the
  * computational operations which will be performed in aggregate on that source.
  * However, if the provided stream operations do not offer the desired
  * functionality, the {@link #iterator()} and {@link #spliterator()} operations
- * can be used to perform a controlled traversal.
+ * can be used to perform a controlled traversal.  // 如果流操作无法满足我们期望的功能，那么可以采用迭代器和分割器对流对象进行控制性的操作；
  *
  * <p>A stream pipeline, like the "widgets" example above, can be viewed as
  * a <em>query</em> on the stream source.  Unless the source was explicitly
@@ -141,7 +141,7 @@ import java.util.function.UnaryOperator;
  * {@link Collection#stream() Collection.stream()} creates a sequential stream,
  * and {@link Collection#parallelStream() Collection.parallelStream()} creates
  * a parallel one.)  This choice of execution mode may be modified by the
- * {@link #sequential()} or {@link #parallel()} methods, and may be queried with
+ * {@link #sequential()} or {@link #parallel()} methods, and may be queried with // 最终修改流的执行模式是穿行还是并行的；
  * the {@link #isParallel()} method.
  *
  * @param <T> the type of the stream elements

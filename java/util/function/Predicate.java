@@ -46,7 +46,7 @@ public interface Predicate<T> {
      * @return {@code true} if the input argument matches the predicate,
      * otherwise {@code false}
      */
-    boolean test(T t);
+    boolean test(T t);// 根据输入的逻辑，返回一个布尔值；
 
     /**
      * Returns a composed predicate that represents a short-circuiting logical

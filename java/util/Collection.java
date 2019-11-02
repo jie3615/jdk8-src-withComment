@@ -517,7 +517,7 @@ public interface Collection<E> extends Iterable<E> {
      *
      * <p>The default implementation should be overridden by subclasses that
      * can return a more efficient spliterator.  In order to
-     * preserve expected laziness behavior for the {@link #stream()} and
+     * preserve expected laziness behavior for the {@link #stream()} and // 为了保留延迟行为，特性值应该绑定... ...
      * {@link #parallelStream()}} methods, spliterators should either have the
      * characteristic of {@code IMMUTABLE} or {@code CONCURRENT}, or be
      * <em><a href="Spliterator.html#binding">late-binding</a></em>.
@@ -538,7 +538,7 @@ public interface Collection<E> extends Iterable<E> {
      * The default implementation creates a
      * <em><a href="Spliterator.html#binding">late-binding</a></em> spliterator
      * from the collections's {@code Iterator}.  The spliterator inherits the
-     * <em>fail-fast</em> properties of the collection's iterator.
+     * <em>fail-fast</em> properties of the collection's iterator. // 继承了快速失败属性
      * <p>
      * The created {@code Spliterator} reports {@link Spliterator#SIZED}.
      *
@@ -577,8 +577,8 @@ public interface Collection<E> extends Iterable<E> {
      * @return a sequential {@code Stream} over the elements in this collection
      * @since 1.8
      */
-    default Stream<E> stream() {
-        return StreamSupport.stream(spliterator(), false);
+    default Stream<E> stream() { // 接口的默认方法实现，返回一个串行流
+        return StreamSupport.stream(spliterator(), false);  // spliterator 分割迭代器，对集合分割
     }
 
     /**

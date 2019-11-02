@@ -52,8 +52,8 @@ import java.util.function.Predicate;
  * specification of streams, stream operations, stream pipelines, and
  * parallelism, which governs the behavior of all stream types.
  *
- * @param <T> the type of the stream elements
- * @param <S> the type of of the stream implementing {@code BaseStream}
+ * @param <T> the type of the stream elements // 流中元素类型
+ * @param <S> the type of of the stream implementing {@code BaseStream} // 实现了流的类型
  * @since 1.8
  * @see Stream
  * @see IntStream
@@ -81,7 +81,7 @@ public interface BaseStream<T, S extends BaseStream<T, S>>
      *
      * @return the element spliterator for this stream
      */
-    Spliterator<T> spliterator();
+    Spliterator<T> spliterator(); // 分割迭代器
 
     /**
      * Returns whether this stream, if a terminal operation were to be executed,
@@ -90,7 +90,7 @@ public interface BaseStream<T, S extends BaseStream<T, S>>
      *
      * @return {@code true} if this stream would execute in parallel if executed
      */
-    boolean isParallel();
+    boolean isParallel();// 是否并行，应该在执行流的终止操作之前，否则会出现无法预期的结果
 
     /**
      * Returns an equivalent stream that is sequential.  May return
@@ -102,7 +102,7 @@ public interface BaseStream<T, S extends BaseStream<T, S>>
      *
      * @return a sequential stream
      */
-    S sequential();
+    S sequential();// 返回一个流类型，等价的串行流；
 
     /**
      * Returns an equivalent stream that is parallel.  May return
@@ -114,7 +114,7 @@ public interface BaseStream<T, S extends BaseStream<T, S>>
      *
      * @return a parallel stream
      */
-    S parallel();
+    S parallel();// 返回一个流类型，等价的并行流；
 
     /**
      * Returns an equivalent stream that is
@@ -147,7 +147,7 @@ public interface BaseStream<T, S extends BaseStream<T, S>>
      * @param closeHandler A task to execute when the stream is closed
      * @return a stream with a handler that is run if the stream is closed
      */
-    S onClose(Runnable closeHandler);
+    S onClose(Runnable closeHandler);// 流管道中的关闭操作，当调用的时候会按照添加的顺序调用关闭处理器，所有的关闭处理器都会执行；
 
     /**
      * Closes this stream, causing all close handlers for this stream pipeline
