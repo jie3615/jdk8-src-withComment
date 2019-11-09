@@ -578,7 +578,7 @@ public interface Collection<E> extends Iterable<E> {
      * @since 1.8
      */
     default Stream<E> stream() { // 接口的默认方法实现，返回一个串行流
-        return StreamSupport.stream(spliterator(), false);  // spliterator 分割迭代器，对集合分割
+        return StreamSupport.stream(spliterator(), false);  // spliterator 分割迭代器，对集合分割，spliterator()返回包含集合的迭代器；返回流源的Pipeline的Head 对象；
     }
 
     /**

@@ -480,17 +480,17 @@ public interface Stream<T> extends BaseStream<T, Stream<T>> {
 
     /**
      * Performs an action for each element of this stream.
-     *
+     *  对流中每一个而元素执行一个动作，是一个终止操作
      * <p>This is a <a href="package-summary.html#StreamOps">terminal
      * operation</a>.
      *
      * <p>The behavior of this operation is explicitly nondeterministic.
-     * For parallel stream pipelines, this operation does <em>not</em>
+     * For parallel stream pipelines, this operation does <em>not</em>       // 并行流是不会遵循流中的元素的顺序的
      * guarantee to respect the encounter order of the stream, as doing so
      * would sacrifice the benefit of parallelism.  For any given element, the
      * action may be performed at whatever time and in whatever thread the
      * library chooses.  If the action accesses shared state, it is
-     * responsible for providing the required synchronization.
+     * responsible for providing the required synchronization.                  // 如果动作有同步操作，就需要加入同步控制
      *
      * @param action a <a href="package-summary.html#NonInterference">
      *               non-interfering</a> action to perform on the elements

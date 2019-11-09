@@ -186,7 +186,7 @@ abstract class ReferencePipeline<P_IN, P_OUT>
         return new StatelessOp<P_OUT, R>(this, StreamShape.REFERENCE,
                                      StreamOpFlag.NOT_SORTED | StreamOpFlag.NOT_DISTINCT) {
             @Override
-            Sink<P_OUT> opWrapSink(int flags, Sink<R> sink) {
+            Sink<P_OUT> opWrapSink(int flags, Sink<R> sink) { // 操作包装
                 return new Sink.ChainedReference<P_OUT, R>(sink) {
                     @Override
                     public void accept(P_OUT u) {
@@ -573,11 +573,11 @@ abstract class ReferencePipeline<P_IN, P_OUT>
         }
 
         // Optimized sequential terminal operations for the head of the pipeline
-
+        // 经过优化的针对于流源的终止操作
         @Override
         public void forEach(Consumer<? super E_OUT> action) {
-            if (!isParallel()) {
-                sourceStageSpliterator().forEachRemaining(action);
+            if (!isParallel()) {               // 只会处理源调用的串行流
+                sourceStageSpliterator().forEachRemaining(action);// sourceStageSpliterator()返回流源的分割迭代器；
             }
             else {
                 super.forEach(action);
@@ -602,10 +602,10 @@ abstract class ReferencePipeline<P_IN, P_OUT>
      * @param <E_OUT> type of elements in produced by this stage
      * @since 1.8
      */
-    abstract static class StatelessOp<E_IN, E_OUT>
+    abstract static class StatelessOp<E_IN, E_OUT> // 无状态的流的中间状态
             extends ReferencePipeline<E_IN, E_OUT> {
         /**
-         * Construct a new Stream by appending a stateless intermediate
+         * Construct a new Stream by appending a stateless intermediate      // 向管道上追加中间操作
          * operation to an existing stream.
          *
          * @param upstream The upstream pipeline stage

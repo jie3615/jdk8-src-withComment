@@ -667,9 +667,9 @@ public interface Spliterator<T> {
         @Override
         default boolean tryAdvance(Consumer<? super Integer> action) {
             if (action instanceof IntConsumer) {
-                return tryAdvance((IntConsumer) action);
-            }
-            else {
+                return tryAdvance((IntConsumer) action);  // IntConsumer 和Consumer没有继承关系，为什么可以强转？
+            }                                            // 实际上是一个lambda表达式，都是通过上下文推断出来的，
+            else {                                      // 函数式编程是可以不通过继承关系实现的 ；可以参考java8_study#ConsumerTest案例
                 if (Tripwire.ENABLED)
                     Tripwire.trip(getClass(),
                                   "{0} calling Spliterator.OfInt.tryAdvance((IntConsumer) action::accept)");

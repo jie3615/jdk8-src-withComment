@@ -158,14 +158,14 @@ abstract class AbstractPipeline<E_IN, E_OUT, S extends BaseStream<E_OUT, S>>
      */
     AbstractPipeline(Supplier<? extends Spliterator<?>> source,
                      int sourceFlags, boolean parallel) {
-        this.previousStage = null;
-        this.sourceSupplier = source;
-        this.sourceStage = this;
+        this.previousStage = null; // 上游的Pipeline,当前head上游为空
+        this.sourceSupplier = source; // 源分割迭代器
+        this.sourceStage = this;     // 源阶段
         this.sourceOrOpFlags = sourceFlags & StreamOpFlag.STREAM_MASK;
         // The following is an optimization of:
         // StreamOpFlag.combineOpFlags(sourceOrOpFlags, StreamOpFlag.INITIAL_OPS_VALUE);
         this.combinedFlags = (~(sourceOrOpFlags << 1)) & StreamOpFlag.INITIAL_OPS_VALUE;
-        this.depth = 0;
+        this.depth = 0; // 流源跟当前中间的操作个数，当前为源
         this.parallel = parallel;
     }
 
@@ -262,7 +262,7 @@ abstract class AbstractPipeline<E_IN, E_OUT, S extends BaseStream<E_OUT, S>>
     }
 
     /**
-     * Gets the source stage spliterator if this pipeline stage is the source
+     * Gets the source stage spliterator if this pipeline stage is the source // 如果是当前管道是源阶段就获取源阶段的分割迭代器
      * stage.  The pipeline is consumed after this method is called and
      * returns successfully.
      *
@@ -272,14 +272,14 @@ abstract class AbstractPipeline<E_IN, E_OUT, S extends BaseStream<E_OUT, S>>
      */
     @SuppressWarnings("unchecked")
     final Spliterator<E_OUT> sourceStageSpliterator() {
-        if (this != sourceStage)
+        if (this != sourceStage)// 如果不是源阶段，抛出状态异常
             throw new IllegalStateException();
 
-        if (linkedOrConsumed)
+        if (linkedOrConsumed)// 如果管道被连接或者被消费了，抛出异常
             throw new IllegalStateException(MSG_STREAM_LINKED);
-        linkedOrConsumed = true;
+        linkedOrConsumed = true;  // 被连接或者消费，也就是说流被使用了；
 
-        if (sourceStage.sourceSpliterator != null) {
+        if (sourceStage.sourceSpliterator != null) {   //
             @SuppressWarnings("unchecked")
             Spliterator<E_OUT> s = sourceStage.sourceSpliterator;
             sourceStage.sourceSpliterator = null;
@@ -510,7 +510,7 @@ abstract class AbstractPipeline<E_IN, E_OUT, S extends BaseStream<E_OUT, S>>
 
     @Override
     @SuppressWarnings("unchecked")
-    final <P_IN> Sink<P_IN> wrapSink(Sink<E_OUT> sink) {
+    final <P_IN> Sink<P_IN> wrapSink(Sink<E_OUT> sink) { // 完成流当中多个操作的串联
         Objects.requireNonNull(sink);
 
         for ( @SuppressWarnings("rawtypes") AbstractPipeline p=AbstractPipeline.this; p.depth > 0; p=p.previousStage) {

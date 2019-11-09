@@ -241,8 +241,8 @@ interface Sink<T> extends Consumer<T> {
      * implementation of the {@code accept()} method must call the correct
      * {@code accept()} method on the downstream {@code Sink}.
      */
-    static abstract class ChainedReference<T, E_OUT> implements Sink<T> {
-        protected final Sink<? super E_OUT> downstream;
+    static abstract class ChainedReference<T, E_OUT> implements Sink<T> { // 链接引用
+        protected final Sink<? super E_OUT> downstream;          // 下游操作
 
         public ChainedReference(Sink<? super E_OUT> downstream) {
             this.downstream = Objects.requireNonNull(downstream);

@@ -66,7 +66,7 @@ public final class StreamSupport {
      */
     public static <T> Stream<T> stream(Spliterator<T> spliterator, boolean parallel) {
         Objects.requireNonNull(spliterator);
-        return new ReferencePipeline.Head<>(spliterator,
+        return new ReferencePipeline.Head<>(spliterator,                                 // Head 流的源
                                             StreamOpFlag.fromCharacteristics(spliterator),
                                             parallel);
     }
